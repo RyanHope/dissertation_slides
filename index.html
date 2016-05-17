@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Cognitive control of eye movements</title>
+  <meta charset="utf-8">
+  <meta name="description" content="Cognitive control of eye movements">
+  <meta name="author" content="Ryan M. Hope">
+  <meta name="generator" content="slidify" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/default.css" media="all" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/phone.css" 
+    media="only screen and (max-device-width: 480px)" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/slidify.css" >
+  <link rel="stylesheet" href="libraries/highlighters/highlight.js/css/tomorrow.css" />
+  <base target="_blank"> <!-- This amazingness opens all links in a new tab. -->  <link rel=stylesheet href="./assets/css/custom.css"></link>
+<link rel=stylesheet href="./assets/css/ribbons.css"></link>
+
+  
+  <!-- Grab CDN jQuery, fall back to local if offline -->
+  <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.min.js"></script>
+  <script>window.jQuery || document.write('<script src="libraries/widgets/quiz/js/jquery.js"><\/script>')</script> 
+  <script data-main="libraries/frameworks/io2012/js/slides" 
+    src="libraries/frameworks/io2012/js/require-1.0.8.min.js">
+  </script>
+  
+  
+
+</head>
+<body style="opacity: 0">
+  <slides class="layout-widescreen">
+    
+    <!-- LOGO SLIDE -->
+      <slide class="nobackground">
+    <article class="flexbox vcenter">
+      <span>
+        <img width='300px' src="assets/img/rpi_logo.png">
+      </span>
+    </article>
+  </slide>
+    <slide class="title-slide segue nobackground">
+  <aside class="gdbar">
+    <img src="assets/img/cogworks_logo.png">
+  </aside>
+  <hgroup class="auto-fadein">
+    <h1>Cognitive control of eye movements</h1>
+    <h2>A model of voluntary and involuntary saccade generation</h2>
+    <p>Ryan M. Hope<br/>Rensselaer Polytechnic Institute</p>
+  </hgroup>
+  <article></article>
+</slide>
+    
+
+    <!-- SLIDES -->
+    <slide class="" id="slide-1" style="background:;">
+  <hgroup>
+    <h2>Introduction</h2>
+  </hgroup>
+  <article data-timings="">
+    <ul>
+<li><p>Humans make on average 1-4 saccades every second</p>
+
+<ul>
+<li>thats 10s to 100s of thousands of saccades per day</li>
+<li>how many are deliberately planned?</li>
+</ul></li>
+<li><p>Humans feel like they can VOLUNTARILY move their eyes:</p>
+
+<ul>
+<li>to any location</li>
+<li>at any time</li>
+</ul></li>
+<li><p>Certain circumstances seem to produce INVOLUNTARY saccades</p>
+
+<ul>
+<li>involuntary saccades contradict top-down goals</li>
+<li>e.g. the sudden onset of the cue in the antisaccade task</li>
+</ul></li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-2" style="background:;">
+  <hgroup>
+    <h2>The antisaccade task</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img src="assets/fig/clinical-1.png" alt="plot of chunk clinical"></p>
+
+<p><span style="font-size: 14px; font-weight: bold; font-style: italic;">Cutsuridis, V., Kumari, V., &amp; Ettinger, U. (2014). Antisaccade performance in schizophrenia: A neural model of decision making in the superior colliculus. Frontiers in Neuroscience, 8(8 FEB), 1–13.</span></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-3" style="background:;">
+  <hgroup>
+    <h2>Overview</h2>
+  </hgroup>
+  <article data-timings="">
+    <h4>Purpose</h4>
+
+<ul>
+<li>To better understand the top-down control mechanisms involved with eye movement control and how they interact with bottom-up control mechanisms</li>
+</ul>
+
+<h4>How</h4>
+
+<ul>
+<li>Compare new computational model to healthy subjects
+
+<ul>
+<li>Meeter&#39;s competitive integration in SC plus automatic saccade timing</li>
+<li>competitive integration guided by braver&#39;s DMC framework</li>
+</ul></li>
+</ul>
+
+<h4>Main results</h4>
+
+<ul>
+<li>For the most part, both bottom-up and top-down control only affect the spatial compoent of saccade programming</li>
+<li>No direct top-down control over when the eyes move, only where</li>
+<li>The ability to change a bottom-up/top-down bias may explain individual and task related variations in performance</li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-4" style="background:;">
+  <hgroup>
+    <h2>Short intersaccadic intervals</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img src="assets/fig/msisi-1.png" alt="plot of chunk msisi"></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-5" style="background:;">
+  <hgroup>
+    <h2>Overlapping saccades and glissades</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img src="assets/fig/osg-1.png" alt="plot of chunk osg"></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-6" style="background:;">
+  <hgroup>
+    <h2>Fixational eye movements (microsaccades)</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img src="assets/fig/micro-1.png" alt="plot of chunk micro"></p>
+
+<p><span style="font-size: 14px; font-weight: bold; font-style: italic;">Martinez-Conde, S., Macknik, S. L., Troncoso, X. G., &amp; Hubel, D. H. (2009). Microsaccades: a neurophysiological analysis. Trends in Neurosciences, 32(9), 463–475.</span></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-7" style="background:;">
+  <hgroup>
+    <h2>Evidence supporting automatic saccade timing</h2>
+  </hgroup>
+  <article data-timings="">
+    <ul>
+<li><p>corrective eye movements (aka glissades)</p>
+
+<ul>
+<li>short intersaccadic intervals</li>
+<li>no intersaccadic interval</li>
+<li>overlapping saccades</li>
+</ul></li>
+<li><p>fixational eye movements (aka microsaccades)</p>
+
+<ul>
+<li>reduce image fading from photoreceptor fatigue</li>
+<li>possibly related to shifts of attention</li>
+<li>follows main-sequence</li>
+</ul></li>
+<li><p>smooth pursuit</p>
+
+<ul>
+<li>lots of small regularly spaced unconscious saccades</li>
+</ul></li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="segue dark quote" id="slide-8" style="background:;">
+  <article data-timings="">
+    <p><center><ss>How does the sense of voluntary control emerge from an oculomotor control system based on automatic saccade timing?</ss></center></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="segue dark quote" id="slide-9" style="background:;">
+  <hgroup>
+    <h2>The Experiment</h2>
+  </hgroup>
+  <article data-timings="">
+    
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-10" style="background:;">
+  <hgroup>
+    <h2>Mixed-block antisaccade task</h2>
+  </hgroup>
+  <article data-timings="">
+    
+<div style='float:left;width:48%;'>
+  <ul>
+<li>23 subjects</li>
+<li>480 trials split by 12 blocks
+
+<ul>
+<li>20 anti / 20 pro per block</li>
+<li>Dropped all trials with blinks between fixation point offset
+and first saccade</li>
+</ul></li>
+<li>No specific instructions to prioritize saccade accuracy
+
+<ul>
+<li>Subjects most likely though secondary task was primary task</li>
+</ul></li>
+</ul>
+
+</div>
+<div style='float:right;width:48%;'>
+  <p><img src="assets/fig/unnamed-chunk-2-1.png" alt="plot of chunk unnamed-chunk-2"></p>
+
+</div>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-11" style="background:;">
+  <hgroup>
+    <h2>Saccade response accuracy</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img src="assets/fig/sra-1.png" alt="plot of chunk sra"></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-12" style="background:;">
+  <hgroup>
+    <h2>Saccade latency</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img src="assets/fig/sl-1.png" alt="plot of chunk sl"></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-13" style="background:;">
+  <hgroup>
+    <h2>Saccade amplitude</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img src="assets/fig/sa-1.png" alt="plot of chunk sa"></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-14" style="background:;">
+  <hgroup>
+    <h2>Main sequence</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img src="assets/fig/ms-1.png" alt="plot of chunk ms"></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="segue dark quote" id="slide-15" style="background:;">
+  <hgroup>
+    <h2>Models &amp; Simulations</h2>
+  </hgroup>
+  <article data-timings="">
+    
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-16" style="background:;">
+  <hgroup>
+    <h2>The (C)ontrolled (R)andom-walk with (I)nhibition for (S)accade (P)lanning model</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img src="assets/fig/crisp1-1.png" alt="plot of chunk crisp1"></p>
+
+<p>Nuthmann, A., Smith, T. J., Engbert, R., &amp; Henderson, J. M. (2010). CRISP: a computational model of fixation durations in scene viewing. Psychological Review, 117(2), 382–405.</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-17" style="background:;">
+  <hgroup>
+    <h2>CRISP control mechanisms</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img src="assets/fig/unnamed-chunk-3-1.png" alt="plot of chunk unnamed-chunk-3"></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-18" style="background:;">
+  <hgroup>
+    <h2>CRISP DEVS (Discrete Event System Specification)</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img src="assets/fig/unnamed-chunk-4-1.png" alt="plot of chunk unnamed-chunk-4"></p>
+
+<p><a href="https://github.com/RyanHope/PyeMovements/blob/master/crisp.py">https://github.com/RyanHope/PyeMovements/blob/master/crisp.py</a></p>
+
+<p><a href="https://simpy.readthedocs.org/en/latest">https://simpy.readthedocs.org/en/latest</a></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-19" style="background:;">
+  <hgroup>
+    <h2>Attention Biased Saliency (ABS)-CRISP</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img src="assets/fig/unnamed-chunk-5-1.png" alt="plot of chunk unnamed-chunk-5"></p>
+
+<h2>The Models</h2>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-20" style="background:;">
+  <hgroup>
+    <h2>Model variant conceptual differences</h2>
+  </hgroup>
+  <article data-timings="">
+    <ul>
+<li><p>For the CRISP model, fixating is achieved via saccade cancellation.</p></li>
+<li><p>For the ABS-CRISP, fixating is achieved via making a saccade of zero amplitude.</p></li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-21" style="background:;">
+  <hgroup>
+    <h2>Model antisaccade task interaction</h2>
+  </hgroup>
+  <article data-timings="">
+    
+<div style='float:left;width:48%;'>
+  <p>CRISP:</p>
+
+<ul>
+<li>possible cancellation at gap</li>
+<li>possible cancellation at cue</li>
+<li>rate change at gap</li>
+<li>rate change at cue</li>
+<li>getTarget() always returns Inf</li>
+</ul>
+
+</div>
+<div style='float:right;width:48%;'>
+  <p>ABS-CRISP:</p>
+
+<ul>
+<li>attention shift triggered at gap</li>
+<li>attention shift triggered at cue</li>
+<li>rate change at gap</li>
+<li>rate change at cue</li>
+<li>getTarget() weighted sum of saliency and attention map
+
+<ul>
+<li>\[
+TM =  (\alpha) * AM + (1-\alpha) * SM
+\]</li>
+<li>AM and SM single floating point value (-Inf,Inf) centered at 0</li>
+<li>indicates horizontal position relative to fixation point</li>
+</ul></li>
+</ul>
+
+</div>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="segue dark quote" id="slide-22" style="background:;">
+  <hgroup>
+    <h2>Model fitting/evaluation procedure</h2>
+  </hgroup>
+  <article data-timings="">
+    
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-23" style="background:;">
+  <hgroup>
+    <h2>Model parameters</h2>
+  </hgroup>
+  <article data-timings="">
+    
+<div style='float:left;width:48%;'>
+  <p>CRISP:
+<img src="assets/fig/unnamed-chunk-6-1.png" alt="plot of chunk unnamed-chunk-6">
+617,400 combinations</p>
+
+</div>
+<div style='float:right;width:48%;'>
+  <p>ABS-CRISP:
+<img src="assets/fig/unnamed-chunk-7-1.png" alt="plot of chunk unnamed-chunk-7">
+343,000 combinations</p>
+
+</div>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-24" style="background:;">
+  <hgroup>
+    <h2>MindModeling@Home (Beta)</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>MindModeling@Home is volunteer computing pool dedicated to the advancement of cognitive science.</p>
+
+<ul>
+<li>Based in Dayton, OH at:
+
+<ul>
+<li>The University of Dayton Research Institute</li>
+<li>Wright State University</li>
+</ul></li>
+<li><a href="https://mindmodeling.org/">https://mindmodeling.org/</a></li>
+<li><strong>Can run a year&#39;s worth of simulations in the matter of a few hours to a few days!</strong></li>
+</ul>
+
+<p>Powered by:</p>
+
+<p><img src="assets/fig/unnamed-chunk-8-1.png" alt="plot of chunk unnamed-chunk-8"></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-25" style="background:;">
+  <hgroup>
+    <h2>Parameter space evaluation</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>&quot;model run&quot; = 500 trials</p>
+
+<p>KS test = Kolmogorov–Smirnov test</p>
+
+<ul>
+<li>One model run per parameter combination was dispatched out to volunteer computers</li>
+<li>For each model run:
+
+<ul>
+<li>the resulting latency distribution (from the model) was compared to each of the 23 subjects data using a two-sample KS test</li>
+<li>the two-sample KS test scores from each subject (as well as the evaluated parameter values) were returned to the MindModeling servers</li>
+</ul></li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-26" style="background:;">
+  <hgroup>
+    <h2>&quot;good fitting models&quot;&quot;</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img src="assets/fig/unnamed-chunk-9-1.png" alt="plot of chunk unnamed-chunk-9"></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="segue dark quote" id="slide-27" style="background:;">
+  <hgroup>
+    <h2>Simulation 1</h2>
+  </hgroup>
+  <article data-timings="">
+    
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-28" style="background:;">
+  <hgroup>
+    <h2>Sim1 saccade latency (prosaccade trials)</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img src="assets/fig/s1slp-1.png" alt="plot of chunk s1slp"></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-29" style="background:;">
+  <hgroup>
+    <h2>Sim1 saccade latency (antisaccade trials)</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img src="assets/fig/s1sla-1.png" alt="plot of chunk s1sla"></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-30" style="background:;">
+  <hgroup>
+    <h2>Sim1 cluster analysis</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img src="assets/fig/s1ca-1.png" alt="plot of chunk s1ca"></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="segue dark quote" id="slide-31" style="background:;">
+  <hgroup>
+    <h2>Simulation 2</h2>
+  </hgroup>
+  <article data-timings="">
+    
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-32" style="background:;">
+  <hgroup>
+    <h2>Sim2 saccade response accuracy</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img src="assets/fig/s2ra-1.png" alt="plot of chunk s2ra"></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-33" style="background:;">
+  <hgroup>
+    <h2>Sim2 saccade latency (prosaccade trials)</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img src="assets/fig/s2slp-1.png" alt="plot of chunk s2slp"></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-34" style="background:;">
+  <hgroup>
+    <h2>Sim2 saccade latency (antisaccade trials)</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img src="assets/fig/s2sla-1.png" alt="plot of chunk s2sla"></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-35" style="background:;">
+  <hgroup>
+    <h2>Sim2 cluster analysis</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img src="assets/fig/s2ca-1.png" alt="plot of chunk s2ca"></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="segue dark quote" id="slide-36" style="background:;">
+  <hgroup>
+    <h2>Conclusions</h2>
+  </hgroup>
+  <article data-timings="">
+    
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-37" style="background:;">
+  <hgroup>
+    <h2>Results</h2>
+  </hgroup>
+  <article data-timings="">
+    <ul>
+<li>Further support of the idea that saccades are triggered automatically and rhythmically
+
+<ul>
+<li>Shifts of attention don&#39;t directly trigger saccade programming</li>
+<li>No direct top-down control over when the eyes move</li>
+<li>Competitive integration of bottom-up and top-down spatial control signals in the SC
+provides most control</li>
+<li>Fixating is making really just making very tiny saccades</li>
+</ul></li>
+<li>The default mode of the SC is to be biased towards bottom-up information
+
+<ul>
+<li>What ever is involved with shifting the bias towards top-down also seems to attenuate other bottom-up effects</li>
+<li>Individual differences seem to be related to the ability to shift the bias</li>
+</ul></li>
+<li>While shifing bias towards town-down is needed to over coming strong bottom-up signal, shifting bias towards bottom-up might be need to make covert attention shifts without producing eye movements</li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-38" style="background:;">
+  <hgroup>
+    <h2>Limitations</h2>
+  </hgroup>
+  <article data-timings="">
+    <ul>
+<li><p>No mechanism for what shifts the bias</p>
+
+<ul>
+<li>Could be related to &quot;focusing&quot; attention</li>
+<li>Might be yolked to shifts of attention</li>
+</ul></li>
+<li><p>Amplitude predictions were horrible</p>
+
+<ul>
+<li>ABS-CRISP did produce partial amplitude saccades which is improvement over Meeter model</li>
+<li>SC likely takes multiple samples from the TM during the duration of the labile program</li>
+</ul></li>
+<li><p>Assumed bottom-up and top-down signals had equal relative strengths and static over time</p></li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="segue dark quote" id="slide-39" style="background:;">
+  <hgroup>
+    <h2>Any questions?</h2>
+  </hgroup>
+  <article data-timings="">
+    <h3>Thank you for your time!</h3>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+    <slide class="backdrop"></slide>
+  </slides>
+  <div class="pagination pagination-small" id='io2012-ptoc' style="display:none;">
+    <ul>
+      <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=1 title='Introduction'>
+         1
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=2 title='The antisaccade task'>
+         2
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=3 title='Overview'>
+         3
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=4 title='Short intersaccadic intervals'>
+         4
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=5 title='Overlapping saccades and glissades'>
+         5
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=6 title='Fixational eye movements (microsaccades)'>
+         6
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=7 title='Evidence supporting automatic saccade timing'>
+         7
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=8 title='NA'>
+         8
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=9 title='The Experiment'>
+         9
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=10 title='Mixed-block antisaccade task'>
+         10
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=11 title='Saccade response accuracy'>
+         11
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=12 title='Saccade latency'>
+         12
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=13 title='Saccade amplitude'>
+         13
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=14 title='Main sequence'>
+         14
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=15 title='Models &amp; Simulations'>
+         15
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=16 title='The (C)ontrolled (R)andom-walk with (I)nhibition for (S)accade (P)lanning model'>
+         16
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=17 title='CRISP control mechanisms'>
+         17
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=18 title='CRISP DEVS (Discrete Event System Specification)'>
+         18
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=19 title='Attention Biased Saliency (ABS)-CRISP'>
+         19
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=20 title='Model variant conceptual differences'>
+         20
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=21 title='Model antisaccade task interaction'>
+         21
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=22 title='Model fitting/evaluation procedure'>
+         22
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=23 title='Model parameters'>
+         23
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=24 title='MindModeling@Home (Beta)'>
+         24
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=25 title='Parameter space evaluation'>
+         25
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=26 title='&quot;good fitting models&quot;&quot;'>
+         26
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=27 title='Simulation 1'>
+         27
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=28 title='Sim1 saccade latency (prosaccade trials)'>
+         28
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=29 title='Sim1 saccade latency (antisaccade trials)'>
+         29
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=30 title='Sim1 cluster analysis'>
+         30
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=31 title='Simulation 2'>
+         31
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=32 title='Sim2 saccade response accuracy'>
+         32
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=33 title='Sim2 saccade latency (prosaccade trials)'>
+         33
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=34 title='Sim2 saccade latency (antisaccade trials)'>
+         34
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=35 title='Sim2 cluster analysis'>
+         35
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=36 title='Conclusions'>
+         36
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=37 title='Results'>
+         37
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=38 title='Limitations'>
+         38
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=39 title='Any questions?'>
+         39
+      </a>
+    </li>
+  </ul>
+  </div>  <!--[if IE]>
+    <script 
+      src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js">  
+    </script>
+    <script>CFInstall.check({mode: 'overlay'});</script>
+  <![endif]-->
+</body>
+  <!-- Load Javascripts for Widgets -->
+  
+  <!-- MathJax: Fall back to local if CDN offline but local image fonts are not supported (saves >100MB) -->
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        processEscapes: true
+      }
+    });
+  </script>
+  <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/2.0-latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  <!-- <script src="https://c328740.ssl.cf1.rackcdn.com/mathjax/2.0-latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+  </script> -->
+  <script>window.MathJax || document.write('<script type="text/x-mathjax-config">MathJax.Hub.Config({"HTML-CSS":{imageFont:null}});<\/script><script src="libraries/widgets/mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML"><\/script>')
+</script>
+<!-- LOAD HIGHLIGHTER JS FILES -->
+  <script src="libraries/highlighters/highlight.js/highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <!-- DONE LOADING HIGHLIGHTER JS FILES -->
+   
+  </html>

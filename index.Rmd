@@ -1,0 +1,591 @@
+---
+title       : Cognitive control of eye movements
+subtitle    : A model of voluntary and involuntary saccade generation
+author      : Ryan M. Hope
+job         : Rensselaer Polytechnic Institute
+biglogo     : rpi_logo.png
+logo        : cogworks_logo.png
+framework   : io2012
+highlighter : highlight.js
+hitheme     : tomorrow
+widgets     : [mathjax]
+mode        : selfcontained
+knit        : slidify::knit2slides
+
+---
+
+```{r echo=FALSE,include=FALSE}
+require(gazetools)
+require(stringr)
+require(pander)
+require(png)
+require(grid)
+require(RColorBrewer)
+require(ggplot2)
+require(data.table)
+
+dropStrip <- function(o) {
+  gt = ggplotGrob(o)
+  panels <- grep("panel", gt$layout$name)
+  top <- unique(gt$layout$t[panels])
+  gt[-(top-1), ]
+}
+
+data(highspeed)
+g <- with(highspeed, gazetools(x,y,1250,1024,768,.38,.30,.67,blinks=(x==0|y==0)))
+g$classify()
+gf = g$fixations()
+gs = g$saccades()
+gf2 = gf[event_ids %in% gs[,(event_ids-1)]]
+gs2 = gs[event_ids %in% gf2[,event_ids+1]]
+gs2[,prev.fix.dur:={eid=(event_ids-1);gf2[event_ids==eid,fixation.duration]}]
+gs2[,category:=ifelse(prev.fix.dur>.180,"[Inf,.180)",ifelse(prev.fix.dur>=.120,"[.180,.120)",ifelse(prev.fix.dur>=.060,"[.120,.060)","[.060,0)")))]
+gs2[,category:=factor(category,levels=c("[Inf,.180)","[.180,.120)","[.120,.060)","[.060,0)"),ordered=T)]
+gs2[,category2:=prev.fix.dur<=.06]
+
+all_summary = fread("summary_20160223220017.dat",header=T)
+all_summary[,correct:=ifelse(saccade.response.target.correct,
+                             paste(mode,"correct",sep="-"),
+                             paste(mode,"incorrect",sep="-"))]
+all_summary[,mode:=relevel(as.factor(mode),2)]
+all_summary[,correct:=relevel(as.factor(correct),3)]
+all_summary_clean = all_summary[clean==TRUE & !is.na(first.saccade.latency)]
+
+d1.mc = fread("sim1data.dat",header=T)
+d2.mc = fread("sim2data.dat",header=T)
+rr1 = fread("ranges1.dat",header=T)
+rr2 = fread("ranges2.dat",header=T)
+lat1.pro = fread("lat1pro.dat",header=T)
+lat1.anti = fread("lat1anti.dat",header=T)
+lat2.pro = fread("lat2pro.dat",header=T)
+lat2.anti = fread("lat2anti.dat",header=T)
+z2.anti = fread("z2anti.dat",header=T)
+r2.anti = fread("r2anti.dat",header=T)
+r2.anti2 = fread("r2anti2.dat",header=T)
+```
+
+## Introduction
+
++ Humans make on average 1-4 saccades every second
+    - thats 10s to 100s of thousands of saccades per day
+    - how many are deliberately planned?
+    
++ Humans feel like they can VOLUNTARILY move their eyes:
+    - to any location
+    - at any time
+    
++ Certain circumstances seem to produce INVOLUNTARY saccades
+    - involuntary saccades contradict top-down goals
+    - e.g. the sudden onset of the cue in the antisaccade task
+
+---
+
+## The antisaccade task
+
+```{r clinical, echo=FALSE, fig.width=13, fig.height=6, warning=FALSE, width=30}
+grid:::grid.raster(readPNG("assets/img/clinical.png"))
+```
+
+<span style="font-size: 14px; font-weight: bold; font-style: italic;">Cutsuridis, V., Kumari, V., & Ettinger, U. (2014). Antisaccade performance in schizophrenia: A neural model of decision making in the superior colliculus. Frontiers in Neuroscience, 8(8 FEB), 1–13.</span>
+
+---
+
+## Overview
+
+#### Purpose
+
++ To better understand the top-down control mechanisms involved with eye movement control and how they interact with bottom-up control mechanisms
+
+#### How
+
++ Compare new computational model to healthy subjects
+    - Meeter's competitive integration in SC plus automatic saccade timing
+    - competitive integration guided by braver's DMC framework
+
+#### Main results
+
++ For the most part, both bottom-up and top-down control only affect the spatial compoent of saccade programming
++ No direct top-down control over when the eyes move, only where
++ The ability to change a bottom-up/top-down bias may explain individual and task related variations in performance
+
+---
+
+## Short intersaccadic intervals
+
+```{r msisi, echo=FALSE, fig.width=13, fig.height=6, warning=FALSE}
+ggplot(gs2[saccade.amplitude<=10],aes(x=saccade.amplitude,y=saccade.peak_velocity)) +
+  geom_smooth(method = "lm", se = FALSE, color="#5e3c99") +
+  geom_point(aes(color=category2,size=category2)) +
+  scale_size_discrete("Previous fixation <60ms") +
+  scale_color_manual("Previous fixation <60ms",values=c("#5e3c99","#e66101")) +
+  xlab("Saccade Amplitude (VA)") +
+  ylab("Peak Saccade Velocity (VA/s)") +
+  theme_bw() +
+  theme(legend.position=c(.15,.85))
+```
+
+---
+
+## Overlapping saccades and glissades
+
+```{r osg, echo=FALSE, fig.width=13, fig.height=6, warning=FALSE}
+g$plot(time>26.15 & time<26.4,show.quality.guide=F,all.classes=F) + theme_bw()
+```
+
+---
+
+## Fixational eye movements (microsaccades)
+
+```{r micro, echo=FALSE, fig.width=13, fig.height=6, warning=FALSE, width=30}
+grid:::grid.raster(readPNG("assets/img/micro.png"))
+```
+
+<span style="font-size: 14px; font-weight: bold; font-style: italic;">Martinez-Conde, S., Macknik, S. L., Troncoso, X. G., & Hubel, D. H. (2009). Microsaccades: a neurophysiological analysis. Trends in Neurosciences, 32(9), 463–475.</span>
+
+---
+
+## Evidence supporting automatic saccade timing
+
++ corrective eye movements (aka glissades)
+    - short intersaccadic intervals
+    - no intersaccadic interval
+    - overlapping saccades
+
++ fixational eye movements (aka microsaccades)
+    - reduce image fading from photoreceptor fatigue
+    - possibly related to shifts of attention
+    - follows main-sequence
+
++ smooth pursuit
+    - lots of small regularly spaced unconscious saccades
+
+--- .segue .dark .quote
+
+<center><ss>How does the sense of voluntary control emerge from an oculomotor control system based on automatic saccade timing?</ss></center>
+
+--- .segue .dark .quote
+
+## The Experiment
+
+--- &twocol
+
+## Mixed-block antisaccade task
+
+*** =left 
+
++ 23 subjects
++ 480 trials split by 12 blocks
+    - 20 anti / 20 pro per block
+    - Dropped all trials with blinks between fixation point offset
+    and first saccade
++ No specific instructions to prioritize saccade accuracy
+    - Subjects most likely though secondary task was primary task
+
+*** =right
+
+```{r fig.width=5,fig.height=6,echo=FALSE}
+grid:::grid.raster(readPNG("assets/img/astask.png"))
+```
+
+---
+
+## Saccade response accuracy
+
+```{r sra,fig.width=13,fig.height=6,echo=FALSE}
+print(exp1_saccade_accuracy <- ggplot(all_summary_clean[,.(smean=mean(saccade.response.target.correct),ssd=sd(saccade.response.target.correct)),by=c("sid","mode")]) +
+  geom_errorbar(aes(x=reorder(sid,smean),y=smean,ymin=smean-ssd,ymax=smean+ssd,color=mode),position=position_dodge(.5),width=0) +
+  geom_point(aes(x=reorder(sid,smean),y=smean,fill=mode),position=position_dodge(.5),shape=21,stroke=0,size=2.5) +
+  scale_fill_manual("Trial type",values=c("#e66101","#5e3c99")) +
+  scale_color_manual("Trial type",values=c("#e66101","#5e3c99")) +
+  xlab("Subjects") +
+  ylab("Average saccade response accuracy") +
+  theme_bw() +
+  theme(legend.position="top") +
+  coord_cartesian(ylim=c(0,1)))
+```
+
+---
+
+## Saccade latency
+
+```{r sl,fig.width=13,fig.height=6,echo=FALSE}
+exp1_saccade_latency <- ggplot(all_summary_clean) +
+  geom_line(aes(x=first.saccade.latency,y=..count..,color=correct),stat="density",size=1.25) +
+  scale_color_manual("Saccade response by trial type",values=brewer.pal(name="Paired",6)[c(5,1,6,2)],guide=guide_legend(nrow=2)) +
+  facet_wrap(~sid,ncol=5) +
+  geom_text(aes(x=0.5,y=5000,label=sid),size=3,hjust=1,data=all_summary_clean[,.(sid=unique(sid))]) +
+  theme_bw() +
+  theme(legend.position=c(.8,.09),
+        legend.direction="vertical") +
+  coord_cartesian(xlim=c(0,.5)) +
+  xlab("Latency (in seconds) of first saccade post cue appearance") +
+  ylab("Count")
+plot(dropStrip(exp1_saccade_latency))
+```
+
+---
+
+## Saccade amplitude
+
+```{r sa,fig.width=13,fig.height=6,echo=FALSE}
+exp1_saccade_amplitude <- ggplot(all_summary_clean) +
+  geom_line(aes(x=first.saccade.amplitude,y=..count..,color=correct),stat="density",size=1.25) +
+  scale_color_manual("Saccade response by trial type",values=brewer.pal(name="Paired",6)[c(5,1,6,2)],guide=guide_legend(nrow=2)) +
+  facet_wrap(~sid,ncol=5) +
+  geom_vline(aes(xintercept=10.86),linetype="dotted") +
+  geom_text(aes(x=0,y=140,label=sid),size=3,hjust=0,data=all_summary_clean[,.(sid=unique(sid))]) +
+  theme_bw() +
+  theme(legend.position=c(.8,.09),
+        legend.direction="vertical") +
+  coord_cartesian(xlim=c(0,15)) +
+  xlab("Amplitude (in degress of visual angle) of first saccade post cue appearance") +
+  ylab("Count")
+plot(dropStrip(exp1_saccade_amplitude))
+```
+
+---
+
+## Main sequence
+
+```{r ms,fig.width=13,fig.height=6,echo=FALSE}
+zz = all_summary_clean[correct=="pro-correct",{m=lm(first.saccade.peak.velocity~0+first.saccade.amplitude);.(slope=m$coefficients[1])},by="sid"]
+exp1_main_sequence = ggplot(all_summary_clean) +
+  geom_point(aes(y=first.saccade.peak.velocity,x=first.saccade.amplitude,color=correct),size=.5) +
+  scale_color_manual("Saccade response by trial type",values=brewer.pal(name="Paired",6)[c(5,1,6,2)],guide=guide_legend(nrow=2)) +
+  facet_wrap(~sid,ncol=5) +
+  geom_abline(aes(intercept=0,slope=slope),data=zz,alpha=.5) +
+  geom_vline(aes(xintercept=10.86),linetype="dotted") +
+  geom_text(aes(x=0,y=250,label=sid),size=3,hjust=0,data=all_summary_clean[,.(sid=unique(sid))]) +
+  theme_bw() +
+  theme(legend.position=c(.8,.09),
+        legend.direction="vertical") +
+  coord_cartesian(xlim=c(0,15),ylim=c(0,300)) +
+  xlab("Amplitude of first saccade post cue appearance") +
+  ylab("Peak velocity of first saccade post cue appearance")
+plot(dropStrip(exp1_main_sequence))
+```
+
+--- .segue .dark .quote
+
+## Models \& Simulations
+
+---
+
+## The (C)ontrolled (R)andom-walk with (I)nhibition for (S)accade (P)lanning model
+
+```{r crisp1, echo=FALSE, fig.width=13, fig.height=5, warning=FALSE}
+grid:::grid.raster(readPNG("assets/img/crisp.png"))
+```
+
+Nuthmann, A., Smith, T. J., Engbert, R., & Henderson, J. M. (2010). CRISP: a computational model of fixation durations in scene viewing. Psychological Review, 117(2), 382–405.
+
+---
+
+## CRISP control mechanisms
+
+```{r fig.width=13,fig.height=7,echo=FALSE}
+grid:::grid.raster(readPNG("assets/img/crisp_plot.png"))
+```
+
+---
+
+## CRISP DEVS (Discrete Event System Specification)
+
+```{r fig.width=13,fig.height=6,echo=FALSE}
+grid:::grid.raster(readPNG("assets/img/CRISP_DEVS.png"))
+```
+
+https://github.com/RyanHope/PyeMovements/blob/master/crisp.py
+
+https://simpy.readthedocs.org/en/latest
+
+---
+
+## Attention Biased Saliency (ABS)-CRISP
+
+
+```{r fig.width=10,fig.height=8,echo=FALSE}
+grid:::grid.raster(readPNG("assets/img/ABS-CRISP_DEVS.png"))
+```
+
+## The Models
+
+---
+    
+## Model variant conceptual differences
+
++ For the CRISP model, fixating is achieved via saccade cancellation.
+
++ For the ABS-CRISP, fixating is achieved via making a saccade of zero amplitude.
+
+--- &twocol
+
+## Model antisaccade task interaction
+
+*** =left
+
+CRISP:
++ possible cancellation at gap
++ possible cancellation at cue
++ rate change at gap
++ rate change at cue
++ getTarget() always returns Inf
+
+*** =right
+
+ABS-CRISP:
++ attention shift triggered at gap
++ attention shift triggered at cue
++ rate change at gap
++ rate change at cue
++ getTarget() weighted sum of saliency and attention map
+    - $$latex
+    TM =  (\alpha) * AM + (1-\alpha) * SM
+    $$
+    - AM and SM single floating point value (-Inf,Inf) centered at 0
+    - indicates horizontal position relative to fixation point
+
+--- .segue .dark .quote
+
+## Model fitting/evaluation procedure
+
+--- &twocol
+
+## Model parameters
+
+*** =left
+
+CRISP:
+```{r fig.width=6,fig.height=4,echo=FALSE}
+grid:::grid.raster(readPNG("assets/img/sim1params.png"))
+```
+617,400 combinations
+
+*** =right
+
+ABS-CRISP:
+```{r fig.width=6,fig.height=4,echo=FALSE}
+grid:::grid.raster(readPNG("assets/img/sim2params.png"))
+```
+343,000 combinations
+
+---
+
+## MindModeling@Home (Beta)
+
+MindModeling@Home is volunteer computing pool dedicated to the advancement of cognitive science.
+
++ Based in Dayton, OH at:
+    - The University of Dayton Research Institute
+    - Wright State University
++ https://mindmodeling.org/
++ **Can run a year's worth of simulations in the matter of a few hours to a few days!**
+
+Powered by:
+
+```{r fig.width=3,fig.height=1.6,echo=FALSE}
+grid.raster(readPNG("assets/img/boinc_600.png"))
+```
+
+---
+
+## Parameter space evaluation
+
+"model run" = 500 trials
+
+KS test = Kolmogorov–Smirnov test
+
++ One model run per parameter combination was dispatched out to volunteer computers
++ For each model run:
+    - the resulting latency distribution (from the model) was compared to each of the 23 subjects data using a two-sample KS test
+    - the two-sample KS test scores from each subject (as well as the evaluated parameter values) were returned to the MindModeling servers
+
+---
+
+## "good fitting models""
+
+```{r fig.width=12,fig.height=5,echo=FALSE}
+grid:::grid.raster(readPNG("assets/img/ks.png"))
+```
+
+--- .segue .dark .quote
+
+## Simulation 1
+
+---
+
+## Sim1 saccade latency (prosaccade trials)
+
+```{r s1slp,fig.width=13,fig.height=6,echo=FALSE, warning=FALSE}
+sim1_pro_fits = ggplot(lat1.pro) +
+  geom_line(aes(x=first.saccade.latency,y=..scaled..,color=type),stat="density",size=1) +
+  facet_wrap(~sid,ncol=4) +
+  xlab("First saccade latency (s)") +
+  ylab("Density") +
+  xlim(c(0,.75)) +
+  scale_color_manual("Source", values=c("#e66101","#5e3c99")) +
+  geom_text(aes(x=0.75,y=0.8,label=sid),size=3,hjust=1,data=lat1.pro[,.(sid=unique(sid))]) +
+  theme_bw() +
+  theme(legend.position="top") +
+  scale_alpha_continuous(range=c(.33,1))
+plot(sim1_pro_fits.gt <- dropStrip(sim1_pro_fits))
+```
+
+---
+
+## Sim1 saccade latency (antisaccade trials)
+
+```{r s1sla,fig.width=13,fig.height=6,echo=FALSE, warning=FALSE}
+sim1_anti_fits = ggplot(lat1.anti) +
+  geom_line(aes(x=first.saccade.latency,y=..scaled..,color=type),stat="density",size=1) +
+  facet_wrap(~sid,ncol=4) +
+  xlab("First saccade latency (s)") +
+  ylab("Density") +
+  xlim(c(0,.75)) +
+  scale_color_manual("Source", values=c("#e66101","#5e3c99")) +
+  geom_text(aes(x=0.75,y=0.8,label=sid),size=3,hjust=1,data=lat1.anti[,.(sid=unique(sid))]) +
+  theme_bw() +
+  theme(legend.position="top") +
+  scale_alpha_continuous(range=c(.33,1))
+plot(sim1_anti_fits.gt <- dropStrip(sim1_anti_fits))
+```
+
+---
+
+## Sim1 cluster analysis
+
+```{r s1ca,fig.width=13,fig.height=6,echo=FALSE, warning=FALSE}
+ggplot(d1.mc,aes(y=ifelse(type=="pro",component,-4+component),x=value,color=factor(type))) +
+        geom_point(size=.75,stroke=1.5) +
+        geom_errorbarh(aes(x=value,xmin=low,xmax=high),height=0) +
+        geom_segment(aes(x=V1,xend=V1,y=ymin,yend=ymax),alpha=.75,data=d1.mc[variable!="timer_states",mean(value),by=c("type","variable")][,c("ymin","ymax"):=.(ifelse(type=="pro",1,-3),ifelse(type=="pro",4,0))][,]) +
+        facet_wrap(~variable,nrow=2,scales="free") +
+        scale_shape_discrete("Trial Type", solid=FALSE) +
+        geom_vline(aes(xintercept=value),data=melt(rr1)[variable %in% d1.mc[,unique(variable)]],linetype="dotted",alpha=.75) +
+        scale_color_manual("Trial Type", values=c("#e66101","#5e3c99")) +
+        scale_size_discrete(range=c(.5,1.5),guide='none') +
+        theme_bw() +
+        theme(legend.position=c(.9,.25)) +
+        xlab("Variable value")
+```
+
+--- .segue .dark .quote
+
+## Simulation 2
+
+---
+
+## Sim2 saccade response accuracy
+
+```{r s2ra,fig.width=13,fig.height=6,echo=FALSE, warning=FALSE}
+
+RA2 = rbind(all_summary_clean[mode=="anti" & sid %in% r2.anti[,unique(sid)],
+                              .(saccade.response=mean(saccade.response.target.correct),
+                                sd=sd(saccade.response.target.correct)),by=c("sid","mode")][,mode:="data"],
+            z2.anti[,.(saccade.response=mean(rsp_mean_anti),sd=sd(rsp_mean_anti),mode="models"),by="sid"])
+ggplot(RA2) +
+       geom_pointrange(aes(x=reorder(sid,saccade.response),y=saccade.response,ymin=saccade.response-sd,ymax=saccade.response+sd,color=mode),position=position_dodge(.5)) +
+       geom_point(aes(x=sid,y=rsp_mean_anti),shape=2,size=3,data=r2.anti2[,.SD,.SDcols=c(1,11)],color="#5e3c99",stroke=1.25) +
+       coord_cartesian(ylim=c(0,1)) +
+       scale_color_manual("Source", values=c("#e66101","#5e3c99")) +
+       ylab("Saccade response accuracy") +
+       xlab("Subject") +
+       theme_bw() +
+       theme(axis.text.x=element_text(angle=45,vjust=.5))
+```
+
+---
+
+## Sim2 saccade latency (prosaccade trials)
+
+```{r s2slp,fig.width=13,fig.height=6,echo=FALSE, warning=FALSE}
+sim2_pro_fits = ggplot(lat2.pro) +
+  geom_line(aes(x=first.saccade.latency,y=..scaled..,color=type),stat="density",size=1) +
+  facet_wrap(~sid,ncol=4) +
+  xlab("First saccade latency (s)") +
+  ylab("Density") +
+  xlim(c(0,.75)) +
+  scale_color_manual("Source", values=c("#e66101","#5e3c99")) +
+  geom_text(aes(x=0.75,y=0.8,label=sid),size=3,hjust=1,data=lat2.pro[,.(sid=unique(sid))]) +
+  theme_bw() +
+  theme(legend.position="top") +
+  scale_alpha_continuous(range=c(.33,1))
+plot(sim2_pro_fits.gt <- dropStrip(sim2_pro_fits))
+```
+
+---
+
+## Sim2 saccade latency (antisaccade trials)
+
+```{r s2sla,fig.width=13,fig.height=6,echo=FALSE, warning=FALSE}
+sim2_anti_fits = ggplot(lat2.anti) +
+  geom_line(aes(x=first.saccade.latency,y=..scaled..,color=type),stat="density",size=1) +
+  facet_wrap(~sid,ncol=4) +
+  xlab("First saccade latency (s)") +
+  ylab("Density") +
+  xlim(c(0,.75)) +
+  scale_color_manual("Source", values=c("#e66101","#5e3c99","#b2abd2")) +
+  geom_text(aes(x=0.75,y=0.8,label=sid),size=3,hjust=1,data=lat2.anti[,.(sid=unique(sid))]) +
+  theme_bw() +
+  theme(legend.position="top")
+plot(sim2_anti_fits.gt <- dropStrip(sim2_anti_fits))
+```
+
+---
+
+## Sim2 cluster analysis
+
+```{r s2ca,fig.width=13,fig.height=6,echo=FALSE, warning=FALSE}
+ggplot(d2.mc,aes(y=ifelse(type=="pro",component,-4+component),x=value,color=factor(type))) +
+  geom_point(size=.75,stroke=1.5) +
+  geom_errorbarh(aes(x=value,xmin=low,xmax=high),height=0) +
+  geom_segment(aes(x=V1,xend=V1,y=ymin,yend=ymax),alpha=.75,data=d2.mc[variable!="timer_states",mean(value),by=c("type","variable")][,c("ymin","ymax"):=.(ifelse(type=="pro",1,-3),ifelse(type=="pro",4,0))][,]) +
+  facet_wrap(~variable,nrow=2,scales="free") +
+  scale_shape_discrete("Trial Type", solid=FALSE) +
+  geom_vline(aes(xintercept=value),data=melt(rr2)[variable %in% d2.mc[,unique(variable)]],linetype="dotted",alpha=.75) +
+  scale_color_manual("Trial Type", values=c("#e66101","#5e3c99")) +
+  scale_size_discrete(range=c(.5,1.5),guide='none') +
+  theme_bw() +
+  theme(legend.position=c(.9,.25)) +
+  xlab("Variable value")
+```
+
+--- .segue .dark .quote
+
+## Conclusions
+
+---
+
+## Results
+
++ Further support of the idea that saccades are triggered automatically and rhythmically
+    - Shifts of attention don't directly trigger saccade programming
+    - No direct top-down control over when the eyes move
+    - Competitive integration of bottom-up and top-down spatial control signals in the SC
+    provides most control
+    - Fixating is making really just making very tiny saccades
++ The default mode of the SC is to be biased towards bottom-up information
+    - What ever is involved with shifting the bias towards top-down also seems to attenuate other bottom-up effects
+    - Individual differences seem to be related to the ability to shift the bias
++ While shifing bias towards town-down is needed to over coming strong bottom-up signal, shifting bias towards bottom-up might be need to make covert attention shifts without producing eye movements
+
+
+---    
+
+## Limitations
+
++ No mechanism for what shifts the bias
+    - Could be related to "focusing" attention
+    - Might be yolked to shifts of attention
+    
++ Amplitude predictions were horrible
+    - ABS-CRISP did produce partial amplitude saccades which is improvement over Meeter model
+    - SC likely takes multiple samples from the TM during the duration of the labile program
+
++ Assumed bottom-up and top-down signals had equal relative strengths and static over time
+
+--- .segue .dark .quote
+
+## Any questions?
+
+### Thank you for your time!
